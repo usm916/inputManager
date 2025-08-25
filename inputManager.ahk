@@ -161,6 +161,20 @@ $*RAlt::       SendEvent {Blind}{Delete down}
 $*RAlt up::    SendEvent {Blind}{Delete up}
 
 ; ---------- Swap Win <-> Ctrl (enabled only when ModeSwapEnabled()=true) ----------
+#If (ModeSwapEnabled() && WinActive("ahk_exe blender.exe"))
+LWin & 0::SendEvent {Numpad0}
+LWin & 1::SendEvent {Numpad1}
+LWin & 2::SendEvent {Numpad2}
+LWin & 3::SendEvent {Numpad3}
+LWin & 4::SendEvent {Numpad4}
+LWin & 5::SendEvent {Numpad5}
+LWin & 6::SendEvent {Numpad6}
+LWin & 7::SendEvent {Numpad7}
+LWin & 8::SendEvent {Numpad8}
+LWin & 9::SendEvent {Numpad9}
+LWin & .::SendEvent {NumpadDot}
+#If
+
 #If ModeSwapEnabled()
 $*LWin::        SendEvent {Blind}{LCtrl down}
 $*LWin up::     SendEvent {Blind}{LCtrl up}
@@ -191,56 +205,29 @@ $`::            SendEvent {vk19}    ; IME toggle
 $!`::           SendEvent {vk1C}    ; Convert
 $+`::           SendEvent {vk1D}    ; NonConvert
 ; If needed, try vkF3/vkF4 depending on your IME.
-F16::      SendEvent {vk19}
-^F16::SendEvent, ~
-+!'::SendEvent, ``
+F16::   SendEvent {vk19}
+^F16::  SendEvent {Shift down}{sc029}{Shift up}
++!'::   SendEvent {sc029}
 
-; ===== Numpad via scancode (down -> 5ms -> up) =====
-SendNumSC_Delay(key) {
-    state := GetKeyState("NumLock", "T")
-    if (!state)
-        SetNumLockState, On
-    if (key = "0")
-        sc := "052"
-    else if (key = "1")
-        sc := "04F"
-    else if (key = "2")
-        sc := "050"
-    else if (key = "3")
-        sc := "051"
-    else if (key = "4")
-        sc := "04B"
-    else if (key = "5")
-        sc := "04C"
-    else if (key = "6")
-        sc := "04D"
-    else if (key = "7")
-        sc := "047"
-    else if (key = "8")
-        sc := "048"
-    else if (key = "9")
-        sc := "049"
-    else if (key = "Dot")
-        sc := "053"
-    SendInput {sc%sc% down}
-    Sleep, 5
-    SendInput {sc%sc% up}
-    if (!state)
-        SetNumLockState, Off
-}
+; ===== =======================================================
+; ===== Only active when Blender is the foreground window ====
 
-^0::SendNumSC_Delay("0")
-^1::SendNumSC_Delay("1")
-^2::SendNumSC_Delay("2")
-^3::SendNumSC_Delay("3")
-^4::SendNumSC_Delay("4")
-^5::SendNumSC_Delay("5")
-^6::SendNumSC_Delay("6")
-^7::SendNumSC_Delay("7")
-^8::SendNumSC_Delay("8")
-^9::SendNumSC_Delay("9")
-^.::SendNumSC_Delay("Dot")
-return
+#IfWinActive ahk_exe blender.exe
+; --- Hotkeys: Ctrl + [0-9 / .] produce pure Numpad digits via scancode (no modifiers) ---
+^0::SendEvent {Numpad0}
+^1::SendEvent {Numpad1}
+^2::SendEvent {Numpad2}
+^3::SendEvent {Numpad3}
+^4::SendEvent {Numpad4}
+^5::SendEvent {Numpad5}
+^6::SendEvent {Numpad6}
+^7::SendEvent {Numpad7}
+^8::SendEvent {Numpad8}
+^9::SendEvent {Numpad9}
+^.::SendEvent {NumpadDot}
+#IfWinActive
+; ===== =======================================================
+; ===== =======================================================
 
 ; ============== Init / Cleanup ===================
 InitTray()
