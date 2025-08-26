@@ -13,7 +13,7 @@ SendLevel 1
 #InstallKeybdHook
 #UseHook
 SendMode, Event
-SetKeyDelay, 5, 5
+SetKeyDelay, 0, 0
 #MenuMaskKey, vk07
 Process, Priority, , High
 
@@ -128,14 +128,14 @@ ShowPopup(msg, ms:=2000) {
     global LastPopupGuiName
     Gui, ModePopup: Destroy
     Gui, ModePopup: New, +AlwaysOnTop -Caption +ToolWindow
-    Gui, ModePopup: Color, 000000
-    Gui, ModePopup: Font, s16 Bold, Segoe UI cFFFFFF
-    Gui, ModePopup: Add, Text, Center w420 h130 cFFFFFF BackgroundTrans, %msg%
+    Gui, ModePopup: Color, 0F0F0F
+    Gui, ModePopup: Font, s16 Bold, Segoe UI cDDDDDD
+    Gui, ModePopup: Add, Text, Center w380 h270 cDDDDDD BackgroundTrans, %msg%
     SysGet, sw, 0
     SysGet, sh, 1
     x := (sw - 420) / 2
     y := (sh - 130) / 2
-    Gui, ModePopup: Show, x%x% y%y% w420 h130, ModePopup
+    Gui, ModePopup: Show, x%x% y%y% w420 h100, ModePopup
     LastPopupGuiName := "ModePopup"
     SetTimer, ClosePopup, % -ms
 }
@@ -157,74 +157,56 @@ return
 
 ; ================= Other mappings =================
 
-$*RAlt::       SendEvent {Blind}{Delete down}
-$*RAlt up::    SendEvent {Blind}{Delete up}
+$*RAlt::       SendInput {Blind}{Delete down}
+$*RAlt up::    SendInput {Blind}{Delete up}
 
 ; ---------- Swap Win <-> Ctrl (enabled only when ModeSwapEnabled()=true) ----------
-#If (ModeSwapEnabled() && WinActive("ahk_exe blender.exe"))
-LWin & 0::SendEvent {Numpad0}
-LWin & 1::SendEvent {Numpad1}
-LWin & 2::SendEvent {Numpad2}
-LWin & 3::SendEvent {Numpad3}
-LWin & 4::SendEvent {Numpad4}
-LWin & 5::SendEvent {Numpad5}
-LWin & 6::SendEvent {Numpad6}
-LWin & 7::SendEvent {Numpad7}
-LWin & 8::SendEvent {Numpad8}
-LWin & 9::SendEvent {Numpad9}
-LWin & .::SendEvent {NumpadDot}
-#If
-
 #If ModeSwapEnabled()
-$*LWin::        SendEvent {Blind}{LCtrl down}
-$*LWin up::     SendEvent {Blind}{LCtrl up}
-$*LCtrl::       SendEvent {Blind}{LWin down}
-$*LCtrl up::    SendEvent {Blind}{LWin up}
+$*LWin::        SendInput {Blind}{LCtrl down}
+$*LWin up::     SendInput {Blind}{LCtrl up}
+$*LCtrl::       SendInput {Blind}{LWin down}
+$*LCtrl up::    SendInput {Blind}{LWin up}
 
-$*RWin::        SendEvent {Blind}{RCtrl down}
-$*RWin up::     SendEvent {Blind}{RCtrl up}
-$*RCtrl::       SendEvent {Blind}{Delete down}
-$*RCtrl up::    SendEvent {Blind}{Delete up}
+$*RWin::        SendInput {Blind}{RCtrl down}
+$*RWin up::     SendInput {Blind}{RCtrl up}
+$*RCtrl::       SendInput {Blind}{Delete down}
+$*RCtrl up::    SendInput {Blind}{Delete up}
 
-+`::SendEvent, ~
++`::SendInput, ~
 #If  ; end conditional hotkeys
 
 ; ============ Middle / Shift+Middle ===============
-*$MButton::             SendEvent {MButton down}
-*$MButton up::          SendEvent {MButton up}
-+*$MButton::            SendEvent +{MButton down}
-+*$MButton up::         SendEvent +{MButton up}
+*$MButton::             SendInput {MButton down}
+*$MButton up::          SendInput {MButton up}
++*$MButton::            SendInput +{MButton down}
++*$MButton up::         SendInput +{MButton up}
 
-*XButton2::             SendEvent {MButton down}
-*XButton2 up::          SendEvent {MButton up}
-+*XButton2::            SendEvent +{MButton down}
-+*XButton2 up::         SendEvent +{MButton up}
+*XButton2::             SendInput {MButton down}
+*XButton2 up::          SendInput {MButton up}
++*XButton2::            SendInput +{MButton down}
++*XButton2 up::         SendInput +{MButton up}
 
 ; ================= IME mappings ===================
-$`::            SendEvent {vk19}    ; IME toggle
-$!`::           SendEvent {vk1C}    ; Convert
-$+`::           SendEvent {vk1D}    ; NonConvert
+$`::            SendInput {vk19}    ; IME toggle
+$!`::           SendInput {vk1C}    ; Convert
+$+`::           SendInput {vk1D}    ; NonConvert
 ; If needed, try vkF3/vkF4 depending on your IME.
-F16::   SendEvent {vk19}
-^F16::  SendEvent {Shift down}{sc029}{Shift up}
-+!'::   SendEvent {sc029}
+F16::   SendInput {vk19}
+^F16::  SendInput {Shift down}{sc029}{Shift up}
++!'::   SendInput {sc029}
 
 ; ===== =======================================================
 ; ===== Only active when Blender is the foreground window ====
-
 #IfWinActive ahk_exe blender.exe
-; --- Hotkeys: Ctrl + [0-9 / .] produce pure Numpad digits via scancode (no modifiers) ---
-^0::SendEvent {Numpad0}
-^1::SendEvent {Numpad1}
-^2::SendEvent {Numpad2}
-^3::SendEvent {Numpad3}
-^4::SendEvent {Numpad4}
-^5::SendEvent {Numpad5}
-^6::SendEvent {Numpad6}
-^7::SendEvent {Numpad7}
-^8::SendEvent {Numpad8}
-^9::SendEvent {Numpad9}
-^.::SendEvent {NumpadDot}
+; ; --- Hotkeys: Ctrl + [0-9 / .] produce pure Numpad digits via scancode (no modifiers) ---
+^0::SendInput {Numpad0}
+^1::SendInput {Numpad1}
+^2::SendInput {Numpad2}
+^3::SendInput {Numpad3}
+^4::SendInput {Numpad4}
+^5::SendInput {Numpad5}
+^6::SendInput {Numpad6}
+^.::SendInput {NumpadDot}
 #IfWinActive
 ; ===== =======================================================
 ; ===== =======================================================
@@ -235,5 +217,5 @@ InitTray()
 OnExit, _cleanup
 return
 _cleanup:
-SendEvent {Shift up}{Ctrl up}{Alt up}{LWin up}{RWin up}
+SendInput {Shift up}{Ctrl up}{Alt up}{LWin up}{RWin up}
 ExitApp

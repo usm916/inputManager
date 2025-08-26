@@ -1,4 +1,6 @@
 ﻿; Catch mapped input from scriptA (which uses SendLevel 1)
+#IfWinNotActive ahk_exe blender.exe
+
 #InputLevel 1
 #SingleInstance Force
 #InstallMouseHook
@@ -19,14 +21,6 @@ INITIAL_POSITION := 10
 
 global isScrolling := False
 global hasScrollingStarted := False
-
-*$MButton::       Gosub, __MB_X2_Down
-*$XButton2::      Gosub, __MB_X2_Down
-return
-
-*$MButton up::    Gosub, __MB_X2_Up
-*$XButton2 up::   Gosub, __MB_X2_Up
-return
 
 convertRange(value, min1, max1, min2, max2) {
     ; linear conversion of an input value
@@ -55,18 +49,14 @@ IsVisualStudio() {
     WinGet, winExe, ProcessName, A
     return (winExe = "devenv.exe")
 }
-#IfWinActive ahk_exe blender.exe
-*$MButton::             SendEvent {MButton down}
-*$MButton up::          SendEvent {MButton up}
-+*$MButton::            SendEvent +{MButton down}
-+*$MButton up::         SendEvent +{MButton up}
 
-*XButton2::             SendEvent {MButton down}
-*XButton2 up::          SendEvent {MButton up}
-+*XButton2::            SendEvent +{MButton down}
-+*XButton2 up::         SendEvent +{MButton up}
-#IfWinActive
+*$MButton::       Gosub, __MB_X2_Down
+*$XButton2::      Gosub, __MB_X2_Down
+return
 
+*$MButton up::    Gosub, __MB_X2_Up
+*$XButton2 up::   Gosub, __MB_X2_Up
+return
 #If IsTargetApp()
     ; use $* to avoid recursion and catch with modifiers
     __MB_X2_Down:
@@ -144,10 +134,11 @@ IsVisualStudio() {
                 }
             }
         } else {
-            ; fall back to native middle click without re-triggering this hotkey
-            SendInput {MButton down}
-            Sleep, 10
-            SendInput {MButton up}
+            #IfWinNotActive ahk_exe blender.exe
+                SendInput {MButton down}
+                Sleep, 10
+                SendInput {MButton up}
+            #IF
         }
     return
 
@@ -166,4 +157,5 @@ IsVisualStudio() {
             cancelScroll()
         }
     return
+#If
 #If
