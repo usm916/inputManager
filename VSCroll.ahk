@@ -1,5 +1,16 @@
 ﻿; Catch mapped input from scriptA (which uses SendLevel 1)
-#IfWinNotActive ahk_exe blender.exe
+
+; target app detection
+IsTargetApp() {
+    WinGet, winExe, ProcessName, A
+    return winExe ~= "^(Code\.exe|devenv\.exe|explorer\.exe|notepad\.exe)$"
+}
+IsVisualStudio() {
+    WinGet, winExe, ProcessName, A
+    return (winExe = "devenv.exe")
+}
+#If IsTargetApp()
+; #IfWinNotActive ahk_exe blender.exe
 
 #InputLevel 1
 #SingleInstance Force
@@ -38,16 +49,6 @@ cancelScroll(vscode:= True) {
             PostMessage 0x20A, 1 << 16, y << 16 | x, , A
         }
     }
-}
-
-; target app detection
-IsTargetApp() {
-    WinGet, winExe, ProcessName, A
-    return winExe ~= "^(Code\.exe|devenv\.exe|explorer\.exe|notepad\.exe)$"
-}
-IsVisualStudio() {
-    WinGet, winExe, ProcessName, A
-    return (winExe = "devenv.exe")
 }
 
 *$MButton::       Gosub, __MB_X2_Down

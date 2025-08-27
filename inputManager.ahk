@@ -30,11 +30,11 @@ global PressCount := 0
 global LastPressTick := 0
 global LastPopupGuiName := ""
 global ModeLabels := {0:"::Apple mode"
-                    , 1:"::Win mode"
-                    , 2:"Mode 2"
-                    , 3:"Mode 3"
-                    , 4:"Mode 4"
-                    , 5:"Mode 5"}
+                    , 1:"::Windows mode"
+                    , 2:"::Mode 2"
+                    , 3:"::Mode 3"
+                    , 4:"::Mode 4"
+                    , 5:"::Mode 5"}
 global TrayModeItems := {}  ; index -> caption string
 
 ; --- tray init ---
@@ -112,7 +112,7 @@ SetMode(m) {
         return
     }
     CurrentMode := m
-    ShowPopup("Switched to: " . ModeLabels[CurrentMode], POPUP_MS)
+    ShowPopup("Profile: " . ModeLabels[CurrentMode], POPUP_MS)
     UpdateTray()
 }
 
@@ -123,22 +123,45 @@ ModeSwapEnabled() {
     return (CurrentMode != 1)
 }
 
-; --- popup (centered, dark) ---
 ShowPopup(msg, ms:=2000) {
     global LastPopupGuiName
+    w   := 320          ; window width
+    h   := 90          ; window height
+    pad := 16           ; inner padding
+    innerW := w - 2*pad
+    innerH := h - 2*pad
+
     Gui, ModePopup: Destroy
     Gui, ModePopup: New, +AlwaysOnTop -Caption +ToolWindow
     Gui, ModePopup: Color, 0F0F0F
-    Gui, ModePopup: Font, s16 Bold, Segoe UI cDDDDDD
-    Gui, ModePopup: Add, Text, Center w380 h270 cDDDDDD BackgroundTrans, %msg%
+    ; set font face/size/color before adding controls
+    Gui, ModePopup: Font, s16 Bold c0xDDDDDD, Segoe UI
+
+    ; create text and measure height
+    Gui, ModePopup: Add, Text, HwndhText Center BackgroundTrans, %msg%
+    GuiControlGet, pos, ModePopup: Pos, %hText%
+    textH := posH
+
+    ; vertical centering inside padded area
+    yText := pad + (innerH - textH) / 2
+    if (yText < pad)
+        yText := pad
+
+    ; move text to centered position with fixed width
+    GuiControl, ModePopup: Move, %hText%, % "x" pad " y" yText " w" innerW " h" textH
+
+    ; center window on screen
     SysGet, sw, 0
     SysGet, sh, 1
-    x := (sw - 420) / 2
-    y := (sh - 130) / 2
-    Gui, ModePopup: Show, x%x% y%y% w420 h100, ModePopup
+    x := (sw - w) / 2
+    y := (sh - h) / 2
+    Gui, ModePopup: Show, % "x" x " y" y " w" w " h" h, ModePopup
+
     LastPopupGuiName := "ModePopup"
     SetTimer, ClosePopup, % -ms
 }
+
+
 ClosePopup:
     global LastPopupGuiName
     if (LastPopupGuiName != "") {
